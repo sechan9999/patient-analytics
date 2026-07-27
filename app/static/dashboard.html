@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patient Risk Dashboard</title>
+<style>
+  :root {
+    --bg:#0f1420; --card:#1a2130; --ink:#e8edf5; --muted:#93a1b5; --line:#2a3446;
+    --low:#3fb950; --medium:#d29922; --high:#f85149; --accent:#58a6ff;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f5f7fa; --card:#ffffff; --ink:#1a2130; --muted:#5a6b80; --line:#e2e8f0;
+           --low:#2da44e; --medium:#bf8700; --high:#cf222e; --accent:#0969da; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+       background:var(--bg);color:var(--ink);padding:24px}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+  select{background:var(--card);color:var(--ink);border:1px solid var(--line);
+         border-radius:8px;padding:8px 12px;font-size:14px}
+  .grid{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+  @media (max-width:720px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .tile .n{font-size:26px;font-weight:700}
+  .tile .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+  .legend{margin-top:14px;font-size:13px}
+  .legend div{margin:4px 0;color:var(--muted)}
+  .total{font-size:13px;color:var(--muted);margin-top:8px}
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  .pill{padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}
+</style>
+</head>
+<body>
+  <h1>Patient Risk Segmentation</h1>
+  <div class="sub">Cohort analytics dashboard &middot; served by the FastAPI risk-segments endpoint</div>
+
+  <div class="bar">
+    <label for="cohort">Cohort</label>
+    <select id="cohort"></select>
+    <span class="total" id="err"></span>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid">
+    <div class="card">
+      <div style="font-weight:600;margin-bottom:10px">Risk distribution</div>
+      <svg id="donut" viewBox="0 0 200 200" width="100%" style="max-width:240px;display:block;margin:auto"></svg>
+      <div class="legend" id="legend"></div>
+      <div class="total" id="total"></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:600;margin-bottom:6px">High-risk patients</div>
+      <div class="total" id="hrnote"></div>
+      <table id="tbl"><thead><tr><th>Patient</th><th>Score</th><th>Tier</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+<script>
+const COLORS = {low:'--low', medium:'--medium', high:'--high'};
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+async function loadCohorts(){
+  const r = await fetch('/cohorts'); const c = await r.json();
+  const sel = document.getElementById('cohort');
+  sel.innerHTML = Object.entries(c).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  sel.onchange = render;
+  render();
+}
+
+function donut(dist){
+  const svg = document.getElementById('donut');
+  const total = dist.low + dist.medium + dist.high;
+  svg.innerHTML = '';
+  if(total === 0){ svg.innerHTML = '<text x="100" y="105" text-anchor="middle" fill="'+cssv('--muted')+'">no data</text>'; return; }
+  let a0 = -Math.PI/2;                         // start at top
+  const cx=100, cy=100, r=70, w=26;
+  for(const tier of ['low','medium','high']){
+    const frac = dist[tier]/total; if(frac===0) continue;
+    const a1 = a0 + frac*2*Math.PI;
+    const large = frac > .5 ? 1 : 0;
+    const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+    const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`);
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke',cssv(COLORS[tier]));
+    p.setAttribute('stroke-width',w);
+    svg.appendChild(p); a0=a1;
+  }
+  const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',cx); t.setAttribute('y',cy+6); t.setAttribute('text-anchor','middle');
+  t.setAttribute('font-size','30'); t.setAttribute('font-weight','700'); t.setAttribute('fill',cssv('--ink'));
+  t.textContent = total; svg.appendChild(t);
+}
+
+async function render(){
+  const id = document.getElementById('cohort').value;
+  document.getElementById('err').textContent='';
+  // stats + high-risk list in two calls (mirrors real dashboard usage)
+  const [statsR, highR] = await Promise.all([
+    fetch(`/cohort/${id}/risk-segments?include_patients=false`),
+    fetch(`/cohort/${id}/risk-segments?tier_filter=high`)
+  ]);
+  if(!statsR.ok){ document.getElementById('err').textContent='cohort load failed'; return; }
+  const stats = await statsR.json();
+  const high = await highR.json();
+  const d = stats.distribution;
+
+  document.getElementById('tiles').innerHTML = ['low','medium','high'].map(t=>`
+    <div class="tile"><div class="n" style="color:${cssv(COLORS[t])}">${d[t]}</div>
+    <div class="l"><span class="dot" style="background:${cssv(COLORS[t])}"></span>${t}</div></div>`).join('');
+
+  donut(d);
+  document.getElementById('legend').innerHTML = ['low','medium','high'].map(t=>{
+    const pct = stats.total_n? (d[t]/stats.total_n*100).toFixed(0):0;
+    return `<div><span class="dot" style="background:${cssv(COLORS[t])}"></span>${t}: ${d[t]} (${pct}%)</div>`;
+  }).join('');
+  document.getElementById('total').textContent = `Total cohort: ${stats.total_n} patients`;
+
+  const rows = (high.patients||[]).slice(0,15);
+  document.getElementById('hrnote').textContent = `${high.filtered_n} high-risk patients need review`;
+  document.querySelector('#tbl tbody').innerHTML = rows.map(p=>`
+    <tr><td>${p.patient_id}</td><td>${p.risk_score}</td>
+    <td><span class="pill" style="background:${cssv('--high')}22;color:${cssv('--high')}">${p.risk_tier}</span></td></tr>`).join('')
+    || `<tr><td colspan="3" style="color:var(--muted)">none</td></tr>`;
+}
+
+loadCohorts();
+</script>
+</body>
+</html>
