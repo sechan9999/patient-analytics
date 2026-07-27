@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patient Analytics & Cohort Risk Segmentation</title>
   <meta name="description" content="Leakage-safe cohort feature workflow & transparent clinician-auditable risk segmentation dashboard served on GitHub Pages.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>">
+  <meta property="og:title" content="Patient Analytics & Risk Segmentation">
+  <meta property="og:description" content="Leakage-safe cohort feature workflow & transparent, clinician-auditable risk segmentation dashboard.">
+  <meta property="og:type" content="website">
+  <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -679,6 +684,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer / methodology -->
+  <footer style="margin-top:32px;padding-top:20px;border-top:1px solid var(--card-border);
+                 display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+                 font-size:12px;color:var(--text-dim);">
+    <span>
+      Point-in-time cohort features (no target leakage) &middot; transparent additive risk score
+      &middot; static snapshot of the FastAPI <code>/cohort/{id}/risk-segments</code> endpoint.
+      Synthetic data &mdash; not real patients.
+    </span>
+    <a href="https://github.com/sechan9999/patient-analytics" target="_blank" rel="noopener"
+       style="color:var(--accent);text-decoration:none;font-weight:600;">View source on GitHub &rarr;</a>
+  </footer>
 </div>
 
 <!-- Patient Audit Modal -->
@@ -714,16 +732,33 @@ let activeTier = 'all';
 let searchQuery = '';
 
 // Initialize Theme
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  document.getElementById('theme-btn').textContent = next === 'light' ? '🌙 Dark' : '☀️ Light';
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-btn').textContent = theme === 'light' ? '🌙 Dark' : '☀️ Light';
   if (currentCohortData) renderDonut(currentCohortData.distribution);
 }
 
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  setTheme(next);
+  try { localStorage.setItem('pa-theme', next); } catch (e) {}
+}
+
+function applyStoredTheme() {
+  let theme = null;
+  try { theme = localStorage.getItem('pa-theme'); } catch (e) {}
+  if (!theme) {
+    theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  setTheme(theme);
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
 // Load Cohorts on Startup
 async function init() {
+  applyStoredTheme();
   const select = document.getElementById('cohort-select');
   try {
     const res = await fetch('data/cohorts.json');
@@ -857,13 +892,15 @@ function renderRoster() {
   if (!currentCohortData || !currentCohortData.patients) return;
   const tbody = document.getElementById('patient-tbody');
   
-  let list = currentCohortData.patients;
+  let list = currentCohortData.patients.slice();
   if (activeTier !== 'all') {
     list = list.filter(p => p.risk_tier === activeTier);
   }
   if (searchQuery) {
     list = list.filter(p => p.patient_id.toLowerCase().includes(searchQuery));
   }
+  // surface the most at-risk patients first
+  list.sort((a, b) => (b.risk_score - a.risk_score) || a.patient_id.localeCompare(b.patient_id));
 
   document.getElementById('roster-count').textContent = `${list.length} patients`;
 
@@ -876,9 +913,9 @@ function renderRoster() {
     <tr onclick='openModal(${JSON.stringify(p)})'>
       <td class="patient-id">${p.patient_id}</td>
       <td>${p.age ? p.age + ' y/o ' + p.sex : 'N/A'}</td>
-      <td>${p.avg_glucose ? p.avg_glucose + ' mg/dL' : '<span style="color:var(--text-dim)">Missing</span>'}</td>
+      <td>${p.avg_glucose ? Math.round(p.avg_glucose) + ' mg/dL' : '<span style="color:var(--text-dim)">Missing</span>'}</td>
       <td>${p.n_encounters ?? '0'}</td>
-      <td><span class="score-badge">${p.risk_score.toFixed(1)}</span></td>
+      <td><span class="score-badge">${(p.risk_score ?? 0).toFixed(1)}</span></td>
       <td><span class="tier-badge ${p.risk_tier}">${p.risk_tier}</span></td>
     </tr>
   `).join('');

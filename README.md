@@ -1,7 +1,23 @@
 # Patient Analytics API — Cohort Risk Segmentation
 
-Runnable FastAPI service that mirrors the Ropes assessment role: a **leakage-safe cohort
-feature workflow** + a **risk-segmentation endpoint** with query parameters.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-6366f1?logo=githubpages&logoColor=white)](https://sechan9999.github.io/patient-analytics/)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-async-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Tests](https://img.shields.io/badge/tests-7_passing-3fb950?logo=pytest&logoColor=white)](tests/test_api.py)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Runnable FastAPI service that mirrors a real clinical-analytics workflow: a **leakage-safe cohort
+feature workflow** + a **risk-segmentation endpoint** with query parameters, plus an interactive
+dashboard. Two phases in one project — diagnose/fix cohort-reporting bugs, then extend the service
+with a high-level risk-segmentation capability.
+
+**▶ Live demo (no backend needed):** https://sechan9999.github.io/patient-analytics/
+
+![Dashboard](docs/dashboard.png)
+
+Click any patient for a transparent, clinician-auditable score breakdown:
+
+![Patient audit](docs/patient-audit.png)
 
 ## What's inside
 ```
@@ -17,10 +33,15 @@ patient-analytics/
 ```
 
 ## Dashboard
-Open `http://127.0.0.1:8000/` after starting the server. A self-contained HTML page (no build step,
-no CDN) that calls the API and shows a live risk-distribution donut, tier tiles, and a high-risk
-patient table, with a cohort selector. It consumes the same two calls a real dashboard would:
-`?include_patients=false` for stats and `?tier_filter=high` for the review list.
+Two ways to view it:
+- **Live (backend):** open `http://127.0.0.1:8000/` after starting the server — the dashboard calls
+  the API live (`?include_patients=false` for stats, `?tier_filter=high` for the review list).
+- **Static ([GitHub Pages](https://sechan9999.github.io/patient-analytics/)):** `index.html` reads
+  pre-exported `data/*.json` snapshots, so the demo runs with no backend.
+
+Features: risk-distribution donut, tier stat cards, sortable patient roster (high-risk first),
+tier filter tabs, patient search, dark/light theme (system-aware, persisted), and a per-patient
+audit modal explaining every point of the risk score.
 
 ## Run it
 ```bash
