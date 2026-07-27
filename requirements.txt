@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
 pandas
+scikit-learn
 httpx
 pytest
