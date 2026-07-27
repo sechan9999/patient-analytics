@@ -3,7 +3,7 @@
 [![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-6366f1?logo=githubpages&logoColor=white)](https://sechan9999.github.io/patient-analytics/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-async-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Tests](https://img.shields.io/badge/tests-14_passing-3fb950?logo=pytest&logoColor=white)](tests/)
+[![CI](https://github.com/sechan9999/patient-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/sechan9999/patient-analytics/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Runnable FastAPI service that mirrors a real clinical-analytics workflow: a **leakage-safe cohort
