@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Analytics & Cohort Risk Segmentation</title>
+  <meta name="description" content="Leakage-safe cohort feature workflow & transparent clinician-auditable risk segmentation dashboard served on GitHub Pages.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 46, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(30, 41, 64, 0.85);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      
+      --tier-low: #10b981;
+      --tier-low-bg: rgba(16, 185, 129, 0.12);
+      --tier-medium: #f59e0b;
+      --tier-medium-bg: rgba(245, 158, 11, 0.12);
+      --tier-high: #ef4444;
+      --tier-high-bg: rgba(239, 68, 68, 0.12);
+
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --card-hover: rgba(241, 245, 249, 0.9);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.15);
+
+      --tier-low: #059669;
+      --tier-low-bg: rgba(5, 150, 105, 0.1);
+      --tier-medium: #d97706;
+      --tier-medium-bg: rgba(217, 119, 6, 0.1);
+      --tier-high: #dc2626;
+      --tier-high-bg: rgba(220, 38, 38, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.5;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Top Navigation Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .theme-toggle, .mode-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover, .mode-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--accent);
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    select, input[type="text"] {
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Stats Grid Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--card-accent, var(--accent));
+    }
+
+    .stat-card.low { --card-accent: var(--tier-low); }
+    .stat-card.medium { --card-accent: var(--tier-medium); }
+    .stat-card.high { --card-accent: var(--tier-high); }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    /* Main Content Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* SVG Donut Chart */
+    .donut-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .donut-chart {
+      width: 220px;
+      height: 220px;
+      transform: rotate(-90deg);
+    }
+
+    .donut-segment {
+      fill: none;
+      stroke-width: 28;
+      transition: stroke-dasharray 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .donut-segment:hover {
+      opacity: 0.85;
+      stroke-width: 32;
+    }
+
+    .donut-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-total {
+      font-size: 34px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .donut-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .legend-list {
+      width: 100%;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-sm);
+    }
+
+    .legend-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.low { background-color: var(--tier-low); }
+    .dot.medium { background-color: var(--tier-medium); }
+    .dot.high { background-color: var(--tier-high); }
+
+    .legend-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+
+    /* Patient Table */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      transition: background 0.15s ease;
+      cursor: pointer;
+    }
+
+    tbody tr:hover {
+      background: var(--card-hover);
+    }
+
+    .patient-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tier-badge.low { background: var(--tier-low-bg); color: var(--tier-low); }
+    .tier-badge.medium { background: var(--tier-medium-bg); color: var(--tier-medium); }
+    .tier-badge.high { background: var(--tier-high-bg); color: var(--tier-high); }
+
+    .score-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Modal dialog */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-backdrop.active .modal {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .factor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .factor-item {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+    }
+
+    .factor-points {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .empty-state {
+      padding: 40px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">PA</div>
+      <div class="brand-text">
+        <h1>Patient Analytics & Risk Segmentation</h1>
+        <p>Leakage-safe cohort feature workflow & transparent risk dashboard</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="badge" id="source-badge">
+        <span class="badge-dot"></span>
+        <span id="data-source-text">GitHub Pages Static</span>
+      </div>
+      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+    </div>
+  </header>
+
+  <!-- Controls Bar -->
+  <div class="controls-bar">
+    <div class="control-group">
+      <label for="cohort-select">Cohort:</label>
+      <select id="cohort-select" onchange="onCohortChange()"></select>
+    </div>
+    <div class="control-group">
+      <label for="search-input">Search Patient:</label>
+      <input type="text" id="search-input" placeholder="e.g. P0012..." oninput="onSearchInput()">
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Patients</div>
+      <div class="stat-value" id="stat-total">0</div>
+      <div class="stat-sub">Active cohort size</div>
+    </div>
+    <div class="stat-card high">
+      <div class="stat-label">High Risk</div>
+      <div class="stat-value" id="stat-high" style="color: var(--tier-high)">0</div>
+      <div class="stat-sub" id="stat-high-pct">0% of cohort</div>
+    </div>
+    <div class="stat-card medium">
+      <div class="stat-label">Medium Risk</div>
+      <div class="stat-value" id="stat-medium" style="color: var(--tier-medium)">0</div>
+      <div class="stat-sub" id="stat-medium-pct">0% of cohort</div>
+    </div>
+    <div class="stat-card low">
+      <div class="stat-label">Low Risk</div>
+      <div class="stat-value" id="stat-low" style="color: var(--tier-low)">0</div>
+      <div class="stat-sub" id="stat-low-pct">0% of cohort</div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="dashboard-grid">
+    <!-- Left Column: Donut Chart -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>Risk Distribution</span>
+        <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Cohort Breakdown</span>
+      </div>
+
+      <div class="donut-container">
+        <svg class="donut-chart" viewBox="0 0 200 200" id="donut-svg"></svg>
+        <div class="donut-center-text">
+          <div class="donut-total" id="donut-center-val">0</div>
+          <div class="donut-caption">PATIENTS</div>
+        </div>
+      </div>
+
+      <div class="legend-list" id="legend-list"></div>
+    </div>
+
+    <!-- Right Column: Patient List -->
+    <div class="panel">
+      <div class="panel-title">
+        <span>Patient Roster</span>
+        <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;" id="roster-count">0 patients</span>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="tab-btn active" data-tier="all" onclick="setTierFilter('all')">All Tiers</button>
+        <button class="tab-btn" data-tier="high" onclick="setTierFilter('high')">High Risk</button>
+        <button class="tab-btn" data-tier="medium" onclick="setTierFilter('medium')">Medium Risk</button>
+        <button class="tab-btn" data-tier="low" onclick="setTierFilter('low')">Low Risk</button>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Demographics</th>
+              <th>Avg Glucose</th>
+              <th>Encounters</th>
+              <th>Risk Score</th>
+              <th>Risk Tier</th>
+            </tr>
+          </thead>
+          <tbody id="patient-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Patient Audit Modal -->
+<div class="modal-backdrop" id="patient-modal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h3 id="modal-patient-id" class="patient-id" style="font-size: 20px;">P0000</h3>
+        <p style="font-size: 13px; color: var(--text-muted);" id="modal-demographics">65 yo Female</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    
+    <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center;">
+      <span class="tier-badge" id="modal-tier">HIGH</span>
+      <span style="font-size: 14px; font-weight: 600;">Total Score: <span id="modal-score" class="score-badge">5.0</span></span>
+    </div>
+
+    <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">Clinician Risk Breakdown:</div>
+    <div class="factor-list" id="modal-factors"></div>
+  </div>
+</div>
+
+<script>
+// Embedded JSON Fallback Data for seamless offline/standalone static deployment
+const STATIC_COHORTS = {
+  "diabetic_adults": "Type 2 diabetes, adults >=18",
+  "hypertensive_adults": "Essential hypertension, adults >=18"
+};
+
+let currentCohortData = null;
+let activeTier = 'all';
+let searchQuery = '';
+
+// Initialize Theme
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  document.getElementById('theme-btn').textContent = next === 'light' ? '🌙 Dark' : '☀️ Light';
+  if (currentCohortData) renderDonut(currentCohortData.distribution);
+}
+
+// Load Cohorts on Startup
+async function init() {
+  const select = document.getElementById('cohort-select');
+  try {
+    const res = await fetch('data/cohorts.json');
+    if (!res.ok) throw new Error('Fetch failed');
+    const cohorts = await res.json();
+    populateSelect(cohorts);
+  } catch (err) {
+    populateSelect(STATIC_COHORTS);
+  }
+  loadCohortData();
+}
+
+function populateSelect(cohorts) {
+  const select = document.getElementById('cohort-select');
+  select.innerHTML = Object.entries(cohorts)
+    .map(([id, label]) => `<option value="${id}">${label} (${id})</option>`)
+    .join('');
+}
+
+async function loadCohortData() {
+  const cid = document.getElementById('cohort-select').value;
+  try {
+    const res = await fetch(`data/${cid}.json`);
+    if (!res.ok) throw new Error('File not found');
+    currentCohortData = await res.json();
+  } catch (err) {
+    console.warn('Falling back to live API if available or mock data');
+    try {
+      const res = await fetch(`/cohort/${cid}/risk-segments`);
+      currentCohortData = await res.json();
+    } catch (e) {
+      console.error('Data load error', e);
+      return;
+    }
+  }
+  renderDashboard();
+}
+
+function onCohortChange() {
+  loadCohortData();
+}
+
+function onSearchInput() {
+  searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+  renderRoster();
+}
+
+function setTierFilter(tier) {
+  activeTier = tier;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tier === tier);
+  });
+  renderRoster();
+}
+
+function renderDashboard() {
+  if (!currentCohortData) return;
+  const d = currentCohortData.distribution;
+  const total = currentCohortData.total_n || (d.low + d.medium + d.high);
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-high').textContent = d.high;
+  document.getElementById('stat-medium').textContent = d.medium;
+  document.getElementById('stat-low').textContent = d.low;
+
+  document.getElementById('stat-high-pct').textContent = `${(d.high / total * 100).toFixed(1)}% of cohort`;
+  document.getElementById('stat-medium-pct').textContent = `${(d.medium / total * 100).toFixed(1)}% of cohort`;
+  document.getElementById('stat-low-pct').textContent = `${(d.low / total * 100).toFixed(1)}% of cohort`;
+
+  document.getElementById('donut-center-val').textContent = total;
+
+  renderDonut(d);
+  renderLegend(d, total);
+  renderRoster();
+}
+
+function renderDonut(dist) {
+  const svg = document.getElementById('donut-svg');
+  svg.innerHTML = '';
+  const total = dist.low + dist.medium + dist.high;
+  if (total === 0) return;
+
+  const style = getComputedStyle(document.documentElement);
+  const colors = {
+    low: style.getPropertyValue('--tier-low').trim(),
+    medium: style.getPropertyValue('--tier-medium').trim(),
+    high: style.getPropertyValue('--tier-high').trim()
+  };
+
+  const r = 70;
+  const circumference = 2 * Math.PI * r;
+  let offset = 0;
+
+  for (const tier of ['low', 'medium', 'high']) {
+    const val = dist[tier];
+    if (val === 0) continue;
+    const strokeDash = (val / total) * circumference;
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '100');
+    circle.setAttribute('cy', '100');
+    circle.setAttribute('r', r.toString());
+    circle.setAttribute('class', 'donut-segment');
+    circle.setAttribute('stroke', colors[tier]);
+    circle.setAttribute('stroke-dasharray', `${strokeDash} ${circumference - strokeDash}`);
+    circle.setAttribute('stroke-dashoffset', (-offset).toString());
+
+    svg.appendChild(circle);
+    offset += strokeDash;
+  }
+}
+
+function renderLegend(dist, total) {
+  const container = document.getElementById('legend-list');
+  container.innerHTML = ['high', 'medium', 'low'].map(t => {
+    const count = dist[t];
+    const pct = total ? (count / total * 100).toFixed(1) : 0;
+    return `
+      <div class="legend-item">
+        <div class="legend-tag">
+          <span class="dot ${t}"></span>
+          <span>${t} risk</span>
+        </div>
+        <div class="legend-val">${count} (${pct}%)</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderRoster() {
+  if (!currentCohortData || !currentCohortData.patients) return;
+  const tbody = document.getElementById('patient-tbody');
+  
+  let list = currentCohortData.patients;
+  if (activeTier !== 'all') {
+    list = list.filter(p => p.risk_tier === activeTier);
+  }
+  if (searchQuery) {
+    list = list.filter(p => p.patient_id.toLowerCase().includes(searchQuery));
+  }
+
+  document.getElementById('roster-count').textContent = `${list.length} patients`;
+
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No matching patients found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(p => `
+    <tr onclick='openModal(${JSON.stringify(p)})'>
+      <td class="patient-id">${p.patient_id}</td>
+      <td>${p.age ? p.age + ' y/o ' + p.sex : 'N/A'}</td>
+      <td>${p.avg_glucose ? p.avg_glucose + ' mg/dL' : '<span style="color:var(--text-dim)">Missing</span>'}</td>
+      <td>${p.n_encounters ?? '0'}</td>
+      <td><span class="score-badge">${p.risk_score.toFixed(1)}</span></td>
+      <td><span class="tier-badge ${p.risk_tier}">${p.risk_tier}</span></td>
+    </tr>
+  `).join('');
+}
+
+function openModal(patient) {
+  document.getElementById('modal-patient-id').textContent = patient.patient_id;
+  document.getElementById('modal-demographics').textContent = `${patient.age || 'N/A'} yo ${patient.sex || ''}`;
+  document.getElementById('modal-score').textContent = patient.risk_score.toFixed(1);
+  
+  const tierBadge = document.getElementById('modal-tier');
+  tierBadge.textContent = patient.risk_tier.toUpperCase();
+  tierBadge.className = `tier-badge ${patient.risk_tier}`;
+
+  // Clinician risk rule explanation calculation
+  const factors = [];
+  if (patient.avg_glucose >= 200) factors.push({ rule: 'Severe Hyperglycemia (Glucose >= 200)', pts: '+3' });
+  else if (patient.avg_glucose >= 126) factors.push({ rule: 'Diabetic Range Glucose (126-199)', pts: '+2' });
+  else if (patient.avg_glucose >= 100) factors.push({ rule: 'Impaired Fasting Glucose (100-125)', pts: '+1' });
+
+  if (patient.age >= 65) factors.push({ rule: 'Senior Age (>= 65 years)', pts: '+2' });
+  else if (patient.age >= 50) factors.push({ rule: 'Mature Age (50-64 years)', pts: '+1' });
+
+  if (patient.n_encounters >= 10) factors.push({ rule: 'High Utilization (>= 10 encounters)', pts: '+2' });
+  else if (patient.n_encounters >= 5) factors.push({ rule: 'Moderate Utilization (5-9 encounters)', pts: '+1' });
+
+  if (factors.length === 0) {
+    factors.push({ rule: 'Baseline low clinical risk profile', pts: '+0' });
+  }
+
+  document.getElementById('modal-factors').innerHTML = factors.map(f => `
+    <div class="factor-item">
+      <span>${f.rule}</span>
+      <span class="factor-points">${f.pts}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('patient-modal').classList.add('active');
+}
+
+function closeModal(e) {
+  document.getElementById('patient-modal').classList.remove('active');
+}
+
+init();
+</script>
+</body>
+</html>

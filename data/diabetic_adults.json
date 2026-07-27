@@ -1,0 +1,624 @@
+{
+  "cohort_id": "diabetic_adults",
+  "label": "Type 2 diabetes, adults >=18",
+  "total_n": 68,
+  "distribution": {
+    "low": 11,
+    "medium": 33,
+    "high": 24
+  },
+  "patients": [
+    {
+      "patient_id": "P0001",
+      "age": 25,
+      "sex": "M",
+      "avg_glucose": 150.5,
+      "n_encounters": 0,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0002",
+      "age": 24,
+      "sex": "F",
+      "avg_glucose": 95.7,
+      "n_encounters": 14,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0003",
+      "age": 52,
+      "sex": "F",
+      "avg_glucose": 92.0,
+      "n_encounters": 5,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0006",
+      "age": 39,
+      "sex": "F",
+      "avg_glucose": 104.4,
+      "n_encounters": 12,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0007",
+      "age": 79,
+      "sex": "M",
+      "avg_glucose": 74.4,
+      "n_encounters": 0,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0008",
+      "age": 32,
+      "sex": "M",
+      "avg_glucose": 81.7,
+      "n_encounters": 4,
+      "risk_score": 0.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0010",
+      "age": 54,
+      "sex": "M",
+      "avg_glucose": 197.1,
+      "n_encounters": 4,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0014",
+      "age": 64,
+      "sex": "F",
+      "avg_glucose": 86.4,
+      "n_encounters": 9,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0015",
+      "age": 74,
+      "sex": "F",
+      "avg_glucose": 93.3,
+      "n_encounters": 10,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0018",
+      "age": 36,
+      "sex": "F",
+      "avg_glucose": 81.9,
+      "n_encounters": 10,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0019",
+      "age": 70,
+      "sex": "M",
+      "avg_glucose": 97.5,
+      "n_encounters": 7,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0021",
+      "age": 46,
+      "sex": "M",
+      "avg_glucose": 140.7,
+      "n_encounters": 5,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0027",
+      "age": 31,
+      "sex": "F",
+      "avg_glucose": 155.1,
+      "n_encounters": 7,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0030",
+      "age": 32,
+      "sex": "M",
+      "avg_glucose": 87.7,
+      "n_encounters": 9,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0032",
+      "age": 22,
+      "sex": "M",
+      "avg_glucose": 153.9,
+      "n_encounters": 4,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0033",
+      "age": 22,
+      "sex": "M",
+      "avg_glucose": 149.2,
+      "n_encounters": 9,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0034",
+      "age": 46,
+      "sex": "M",
+      "avg_glucose": 59.0,
+      "n_encounters": 7,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0036",
+      "age": 73,
+      "sex": "F",
+      "avg_glucose": 112.4,
+      "n_encounters": 8,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0039",
+      "age": 25,
+      "sex": "M",
+      "avg_glucose": 92.1,
+      "n_encounters": 3,
+      "risk_score": 0.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0042",
+      "age": 68,
+      "sex": "F",
+      "avg_glucose": 121.4,
+      "n_encounters": 12,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0043",
+      "age": 78,
+      "sex": "M",
+      "avg_glucose": 172.2,
+      "n_encounters": 7,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0050",
+      "age": 61,
+      "sex": "M",
+      "avg_glucose": 85.4,
+      "n_encounters": 4,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0053",
+      "age": 21,
+      "sex": "M",
+      "avg_glucose": 98.0,
+      "n_encounters": 7,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0054",
+      "age": 64,
+      "sex": "F",
+      "avg_glucose": 123.8,
+      "n_encounters": 2,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0057",
+      "age": 86,
+      "sex": "M",
+      "avg_glucose": 110.5,
+      "n_encounters": 7,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0058",
+      "age": 78,
+      "sex": "F",
+      "avg_glucose": 126.7,
+      "n_encounters": 10,
+      "risk_score": 6.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0060",
+      "age": 47,
+      "sex": "M",
+      "avg_glucose": 74.7,
+      "n_encounters": 11,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0061",
+      "age": 49,
+      "sex": "F",
+      "avg_glucose": 176.1,
+      "n_encounters": 10,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0062",
+      "age": 22,
+      "sex": "F",
+      "avg_glucose": 72.6,
+      "n_encounters": 3,
+      "risk_score": 0.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0064",
+      "age": 41,
+      "sex": "F",
+      "avg_glucose": 115.3,
+      "n_encounters": 10,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0066",
+      "age": 29,
+      "sex": "M",
+      "avg_glucose": 140.2,
+      "n_encounters": 9,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0070",
+      "age": 54,
+      "sex": "M",
+      "avg_glucose": 119.1,
+      "n_encounters": 5,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0071",
+      "age": 60,
+      "sex": "M",
+      "avg_glucose": 99.6,
+      "n_encounters": 2,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0072",
+      "age": 87,
+      "sex": "M",
+      "avg_glucose": 181.0,
+      "n_encounters": 5,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0074",
+      "age": 79,
+      "sex": "F",
+      "avg_glucose": 119.3,
+      "n_encounters": 9,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0075",
+      "age": 25,
+      "sex": "M",
+      "avg_glucose": 130.7,
+      "n_encounters": 7,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0076",
+      "age": 84,
+      "sex": "F",
+      "avg_glucose": 121.0,
+      "n_encounters": 10,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0077",
+      "age": 60,
+      "sex": "M",
+      "avg_glucose": 99.4,
+      "n_encounters": 11,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0079",
+      "age": 28,
+      "sex": "M",
+      "avg_glucose": 96.6,
+      "n_encounters": 11,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0082",
+      "age": 67,
+      "sex": "F",
+      "avg_glucose": 94.5,
+      "n_encounters": 2,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0086",
+      "age": 84,
+      "sex": "F",
+      "avg_glucose": 117.8,
+      "n_encounters": 5,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0087",
+      "age": 33,
+      "sex": "F",
+      "avg_glucose": 205.2,
+      "n_encounters": 8,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0089",
+      "age": 51,
+      "sex": "M",
+      "avg_glucose": 146.5,
+      "n_encounters": 1,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0091",
+      "age": 20,
+      "sex": "F",
+      "avg_glucose": 50.0,
+      "n_encounters": 0,
+      "risk_score": 0.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0092",
+      "age": 74,
+      "sex": "M",
+      "avg_glucose": 91.9,
+      "n_encounters": 9,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0101",
+      "age": 66,
+      "sex": "F",
+      "avg_glucose": 86.4,
+      "n_encounters": 13,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0102",
+      "age": 28,
+      "sex": "M",
+      "avg_glucose": 46.6,
+      "n_encounters": 10,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0104",
+      "age": 65,
+      "sex": "M",
+      "avg_glucose": 214.6,
+      "n_encounters": 0,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0105",
+      "age": 44,
+      "sex": "M",
+      "avg_glucose": 101.8,
+      "n_encounters": 7,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0106",
+      "age": 22,
+      "sex": "F",
+      "avg_glucose": 151.9,
+      "n_encounters": 1,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0107",
+      "age": 21,
+      "sex": "F",
+      "avg_glucose": 117.2,
+      "n_encounters": 6,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0108",
+      "age": 50,
+      "sex": "M",
+      "avg_glucose": 168.1,
+      "n_encounters": 8,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0109",
+      "age": 64,
+      "sex": "F",
+      "avg_glucose": 100.7,
+      "n_encounters": 10,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0111",
+      "age": 69,
+      "sex": "M",
+      "avg_glucose": 122.0,
+      "n_encounters": 9,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0123",
+      "age": 31,
+      "sex": "M",
+      "avg_glucose": 72.8,
+      "n_encounters": 8,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0125",
+      "age": 75,
+      "sex": "M",
+      "avg_glucose": 93.3,
+      "n_encounters": 7,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0127",
+      "age": 67,
+      "sex": "F",
+      "avg_glucose": 146.8,
+      "n_encounters": 1,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0128",
+      "age": 84,
+      "sex": "F",
+      "avg_glucose": 176.9,
+      "n_encounters": 13,
+      "risk_score": 6.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0133",
+      "age": 33,
+      "sex": "F",
+      "avg_glucose": 119.9,
+      "n_encounters": 12,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0134",
+      "age": 20,
+      "sex": "M",
+      "avg_glucose": 156.5,
+      "n_encounters": 12,
+      "risk_score": 4.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0137",
+      "age": 57,
+      "sex": "M",
+      "avg_glucose": 155.3,
+      "n_encounters": 10,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0138",
+      "age": 45,
+      "sex": "M",
+      "avg_glucose": 159.1,
+      "n_encounters": 2,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0139",
+      "age": 24,
+      "sex": "M",
+      "avg_glucose": 127.4,
+      "n_encounters": 2,
+      "risk_score": 2.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0140",
+      "age": 81,
+      "sex": "F",
+      "avg_glucose": 133.5,
+      "n_encounters": 7,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0142",
+      "age": 34,
+      "sex": "M",
+      "avg_glucose": 101.8,
+      "n_encounters": 4,
+      "risk_score": 1.0,
+      "risk_tier": "low"
+    },
+    {
+      "patient_id": "P0143",
+      "age": 35,
+      "sex": "M",
+      "avg_glucose": 149.6,
+      "n_encounters": 9,
+      "risk_score": 3.0,
+      "risk_tier": "medium"
+    },
+    {
+      "patient_id": "P0145",
+      "age": 67,
+      "sex": "F",
+      "avg_glucose": 212.9,
+      "n_encounters": 4,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    },
+    {
+      "patient_id": "P0149",
+      "age": 87,
+      "sex": "F",
+      "avg_glucose": 106.9,
+      "n_encounters": 12,
+      "risk_score": 5.0,
+      "risk_tier": "high"
+    }
+  ]
+}

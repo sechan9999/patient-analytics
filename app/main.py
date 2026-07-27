@@ -26,8 +26,13 @@ app = FastAPI(title="Patient Analytics API", version="1.0.0")
 _STATIC = os.path.join(os.path.dirname(__file__), "static")
 
 
+_ROOT = os.path.dirname(os.path.dirname(__file__))
+
 @app.get("/", include_in_schema=False)
 def dashboard():
+    index_path = os.path.join(_ROOT, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
     return FileResponse(os.path.join(_STATIC, "dashboard.html"))
 
 
